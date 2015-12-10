@@ -35,7 +35,7 @@ func GetAddUser(w rest.ResponseWriter, r *rest.Request) {
 
 // AddUser creates a users account
 func AddUser(username, password string) error {
-	cmd := exec.Command("adduser", username)
+	cmd := exec.Command("useradd", "-m", username)
 	err := cmd.Start()
 	if err != nil {
 		return err
@@ -44,8 +44,8 @@ func AddUser(username, password string) error {
 	if err != nil {
 		return err
 	}
-	userpass := fmt.Sprintf("%s:%s", username, password)
-	cmd = exec.Command("echo", userpass, "|", "chpasswd")
+	userpass := fmt.Sprintf("echo %s:%s | chpasswd", username, password)
+	cmd = exec.Command("bash", "-c", userpass)
 	err = cmd.Start()
 	if err != nil {
 		return err
