@@ -14,7 +14,7 @@ func MakeHandler() *http.Handler {
 	api.Use(rest.DefaultProdStack...)
 	router, err := rest.MakeRouter(
 		// To add a user
-		rest.Get("/adduser/:username/:password", GetAddUser),
+		rest.Get("/adduser/:username/:password/:recaptcha", GetAddUser),
 	)
 	if err != nil {
 		log.Fatal(err)

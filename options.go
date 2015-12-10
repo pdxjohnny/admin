@@ -25,6 +25,9 @@ func Configure() {
 	viper.SetDefault("static", "static")
 	flag.String("static", "static", "Static content dir")
 	viper.BindPFlag("static", flag.Lookup("static"))
+	viper.SetDefault("recaptcha", "recaptcha")
+	flag.String("recaptcha", "", "reCAPTCHA secret key")
+	viper.BindPFlag("recaptcha", flag.Lookup("recaptcha"))
 
 	flag.Parse()
 }
