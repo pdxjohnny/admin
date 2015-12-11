@@ -1,4 +1,4 @@
-package main
+package adduser
 
 import (
 	"log"
@@ -20,9 +20,4 @@ func Run() {
 		log.Println(err)
 		return
 	}
-}
-
-func main() {
-	Configure()
-	Run()
 }

@@ -1,1 +1,4 @@
-adduserserver
+Godeps/
+!Godeps/Godeps.json
+
+admin*

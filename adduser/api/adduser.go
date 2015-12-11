@@ -1,7 +1,9 @@
-package main
+package api
 
 import (
+	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	"os/exec"
 
@@ -16,16 +18,21 @@ var blankresponse = []byte("{}")
 func GetAddUser(w rest.ResponseWriter, r *rest.Request) {
 	username := r.PathParam("username")
 	password := r.PathParam("password")
-	reCAPTCHA := r.PathParam("recaptcha")
-	fmt.Println("Adding user", username, password)
-	// Verify with google reCAPTCHA
-	err := recaptcha.Verify(viper.GetString("recaptcha"), reCAPTCHA)
-	if err != nil {
-		rest.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+	if viper.GetString("recaptcha") != "" {
+		fmt.Println("Verifiying reCAPTCHA for", username)
+		reCAPTCHA := r.PathParam("recaptcha")
+		// Verify with google reCAPTCHA
+		err := recaptcha.Verify(viper.GetString("recaptcha"), reCAPTCHA)
+		if err != nil {
+			log.Println(err)
+			rest.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 	}
-	err = AddUser(username, password)
+	fmt.Println("Adding user", username)
+	err := AddUser(username, password)
 	if err != nil {
+		log.Println(err)
 		rest.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -35,24 +42,14 @@ func GetAddUser(w rest.ResponseWriter, r *rest.Request) {
 
 // AddUser creates a users account
 func AddUser(username, password string) error {
-	cmd := exec.Command("useradd", "-m", username)
-	err := cmd.Start()
+	out, err := exec.Command("useradd", "-m", username).CombinedOutput()
 	if err != nil {
-		return err
-	}
-	err = cmd.Wait()
-	if err != nil {
-		return err
+		return errors.New(string(out))
 	}
 	userpass := fmt.Sprintf("echo %s:%s | chpasswd", username, password)
-	cmd = exec.Command("bash", "-c", userpass)
-	err = cmd.Start()
+	out, err = exec.Command("bash", "-c", userpass).CombinedOutput()
 	if err != nil {
-		return err
-	}
-	err = cmd.Wait()
-	if err != nil {
-		return err
+		return errors.New(string(out))
 	}
 	return nil
 }

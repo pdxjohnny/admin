@@ -1,16 +1,8 @@
 FROM ubuntu:14.04
-MAINTAINER John Andersen
 
-RUN apt-get update -y && \
-    apt-get install -qqy openssh-server git python sed && \
-    apt-get clean && \
-    rm -rf /var/cache/apt/* && \
-    sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/g' /etc/ssh/sshd_config  && \
-    sed -i 's/PermitRootLogin without-password/PermitRootLogin no/g' /etc/ssh/sshd_config && \
-    mkdir /var/run/sshd
+WORKDIR /app
 
-COPY ./adduserserver /adduserserver
-COPY ./startup.sh /startup.sh
-COPY static /static
+COPY ./static /app/static
+COPY ./admin_linux-amd64 /app/run
 
-CMD ["/startup.sh"]
+CMD ["/app/run"]
