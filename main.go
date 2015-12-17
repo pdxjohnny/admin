@@ -13,5 +13,6 @@ func main() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
 	var rootCmd = &cobra.Command{Use: "admin"}
 	rootCmd.AddCommand(commands.Commands...)
+	// Hasdlkfjaslkdfjlasdjf
 	rootCmd.Execute()
 }
