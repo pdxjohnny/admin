@@ -9,6 +9,7 @@ import (
 )
 
 func main() {
+	// Hello merge conflict
 	runtime.GOMAXPROCS(runtime.NumCPU())
 	var rootCmd = &cobra.Command{Use: "admin"}
 	rootCmd.AddCommand(commands.Commands...)
